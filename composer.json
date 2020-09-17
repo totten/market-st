@@ -1,0 +1,70 @@
+{
+  "name": "totten/market-st",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tim Otten",
+      "email": "totten@civicrm.org"
+    }
+  ],
+  "config": {
+    "platform": {
+      "php": "7.1"
+    }
+  },
+  "autoload": {
+    "psr-4": {"Civi\\MarketSt\\": "src/"}
+  },
+  "require": {
+    "php": "~7.1",
+    "civicrm/composer-downloads-plugin": "~2.1",
+    "civicrm/composer-compile-plugin": "~0.6",
+    "scssphp/scssphp": "~1.2",
+    "padaliyajay/php-autoprefixer": "~1.2"
+  },
+  "extra": {
+    "downloads": {
+      "bootstrap3": {
+        "url": "https://github.com/twbs/bootstrap-sass/archive/v{$version}.zip",
+        "path": "extern/bootstrap3",
+        "version": "3.4.1",
+        "ignore": ["test", "tasks", "lib"]
+      },
+      "bootstrap4": {
+        "url": "https://github.com/twbs/bootstrap/archive/v{$version}.zip",
+        "path": "extern/bootstrap4",
+        "version": "4.5.2",
+        "ignore": ["tests", "docs", "dist/css"]
+      },
+      "bootstrap5": {
+        "url": "https://github.com/twbs/bootstrap/archive/v{$version}.zip",
+        "path": "extern/bootstrap5",
+        "version": "5.0.0-alpha1",
+        "ignore": ["tests", "docs", "dist/css"]
+      }
+    },
+    "compile": [
+      {
+        "title": "MarketSt: Bootstrap3 (<comment>dist/bootstrap3.css</comment>)",
+        "php-method": "\\Civi\\MarketSt\\Scss::build",
+        "watch-files": ["scss/bootstrap3", "src/Scss.php"],
+        "scss-files": {"scss/bootstrap3/main.scss": "dist/bootstrap3.css"},
+        "scss-includes": ["scss/bootstrap3", "extern/bootstrap3/assets/stylesheets"]
+      },
+      {
+        "title": "MarketSt: Bootstrap4 (<comment>dist/bootstrap4.css</comment>)",
+        "php-method": "\\Civi\\MarketSt\\Scss::build",
+        "watch-files": ["scss/bootstrap4", "src/Scss.php"],
+        "scss-files": {"scss/bootstrap4/main.scss": "dist/bootstrap4.css"},
+        "scss-includes": ["scss/bootstrap4", "extern/bootstrap4/scss"]
+      },
+      {
+        "title": "MarketSt: Bootstrap5 (<comment>dist/bootstrap5.css</comment>)",
+        "php-method": "\\Civi\\MarketSt\\Scss::build",
+        "watch-files": ["scss/bootstrap5", "src/Scss.php"],
+        "scss-files": {"scss/bootstrap5/main.scss": "dist/bootstrap5.css"},
+        "scss-includes": ["scss/bootstrap5", "extern/bootstrap5/scss"]
+      }
+    ]
+  }
+}
