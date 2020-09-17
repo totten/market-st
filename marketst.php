@@ -6,6 +6,76 @@ use CRM_Marketst_ExtensionUtil as E;
 // phpcs:enable
 
 /**
+ * Implements hook_civicrm_alterBundle().
+ */
+function marketst_civicrm_alterBundle(CRM_Core_Resources_Bundle $bundle) {
+  $theme = Civi::service('themes')->getActiveThemeKey();
+  switch ($theme . ':' . $bundle->name) {
+    case 'marketst:bootstrap3':
+      $bundle->clear();
+      $bundle->addStyleFile('marketst', 'dist/bootstrap3.css');
+      $bundle->addScriptFile('marketst', 'extern/bootstrap3/assets/javascripts/bootstrap.min.js', [
+        'translate' => FALSE,
+      ]);
+      break;
+
+    case 'marketst:bootstrap4':
+      $bundle->clear();
+      $bundle->addStyleFile('marketst', 'dist/bootstrap4.css');
+      $bundle->addScriptFile('marketst', 'extern/bootstrap4/dist/js/bootstrap.min.js', [
+        'translate' => FALSE,
+      ]);
+      break;
+
+    case 'marketst:bootstrap5':
+      $bundle->clear();
+      $bundle->addStyleFile('marketst', 'dist/bootstrap5.css');
+      $bundle->addScriptFile('marketst', 'extern/bootstrap5/dist/js/bootstrap.min.js', [
+        'translate' => FALSE,
+      ]);
+      break;
+  }
+}
+
+/**
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+ */
+function marketst_civicrm_container($container) {
+  // At time of writing, only `bootstrap3` is defined in core. We're trying
+  // to demonstrate an extreme case where all versions exist
+  $container->addResource(new \Symfony\Component\Config\Resource\FileResource(__FILE__));
+  foreach (['bootstrap4', 'bootstrap5'] as $bundleName) {
+    $svcName = "bundle.{$bundleName}";
+    if ($container->hasDefinition($svcName)) {
+      continue;
+    }
+
+    $container->setDefinition($svcName, new \Symfony\Component\DependencyInjection\Definition('CRM_Core_Resources_Bundle', [$bundleName]))
+      ->setFactory('_marketst_create_bundle')->setArguments([$bundleName])->setPublic(TRUE);
+  }
+}
+
+/**
+ * @param string $name
+ * @return \CRM_Core_Resources_Bundle
+ */
+function _marketst_create_bundle($name) {
+  $bundle = new CRM_Core_Resources_Bundle($name,
+    ['script', 'scriptFile', 'scriptUrl', 'settings', 'style', 'styleFile', 'styleUrl', 'markup']);
+
+  CRM_Utils_Hook::alterBundle($bundle);
+
+  $bundle->filter(function ($s) {
+    if ($s['type'] !== 'settings' && !isset($s['region'])) {
+      $s['region'] = CRM_Core_Resources_Common::REGION;
+    }
+    return $s;
+  });
+
+  return $bundle;
+}
+
+/**
  * Implements hook_civicrm_config().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/
@@ -140,7 +210,13 @@ function marketst_civicrm_entityTypes(&$entityTypes) {
  * Implements hook_civicrm_thems().
  */
 function marketst_civicrm_themes(&$themes) {
-  _marketst_civix_civicrm_themes($themes);
+  // _marketst_civix_civicrm_themes($themes);
+  $themes['marketst'] = [
+    'ext' => 'marketst',
+    'title' => '(Theme) Market Street',
+    'help' => ts('Twitter look-and-feel'),
+  ];
+
 }
 
 // --- Functions below this ship commented out. Uncomment as required. ---
