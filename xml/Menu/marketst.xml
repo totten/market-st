@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/market-st/zoo</path>
+    <page_callback>CRM_Marketst_Page_Zoo</page_callback>
+    <title>Zoo</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
